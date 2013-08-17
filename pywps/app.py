@@ -15,9 +15,9 @@ xmlschema_2 = "http://www.w3.org/TR/xmlschema-2/#"
 LITERAL_DATA_TYPES = ['string', 'float', 'integer', 'boolean']
 
 NAMESPACES = {
-  'wps': "http://www.opengis.net/wps/1.0.0",
-  'ows': "http://www.opengis.net/ows/1.1",
-  'gml': "http://www.opengis.net/gml",
+    'wps': "http://www.opengis.net/wps/1.0.0",
+    'ows': "http://www.opengis.net/ows/1.1",
+    'gml': "http://www.opengis.net/gml",
 }
 
 E = ElementMaker()
