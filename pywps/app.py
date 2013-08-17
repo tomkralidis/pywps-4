@@ -34,6 +34,14 @@ def xml_response(doc):
                     content_type='text/xml')
 
 
+def get_anycase(mapping, key):
+    for k in mapping:
+        if k.lower() == key.lower():
+            key = k
+            break
+    return mapping[key]
+
+
 def get_input_from_xml(doc):
     the_input = MultiDict()
     for input_el in xpath_ns(doc, '/wps:Execute/wps:DataInputs/wps:Input'):
@@ -70,7 +78,7 @@ class WPSRequest(object):
         self.http_request = http_request
 
         if http_request.method == 'GET':
-            self.operation = http_request.args['Request']
+            self.operation = get_anycase(http_request.args, 'Request')
 
             if self.operation == 'GetCapabilities':
                 pass

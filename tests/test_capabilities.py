@@ -47,6 +47,10 @@ class CapabilitiesTest(unittest.TestCase):
         resp = self.client.get('?Request=GetCapabilities')
         self.check_capabilities_response(resp)
 
+    def test_get_request_case_insensitive(self):
+        resp = self.client.get('?reQuEsT=GetCapabilities')
+        self.check_capabilities_response(resp)
+
     def test_post_request(self):
         request_doc = WPS.GetCapabilities()
         resp = self.client.post_xml(doc=request_doc)
