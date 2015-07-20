@@ -1,3 +1,4 @@
 [submodule "demo"]
 	path = demo
-	url = git@github.com:ldesousa/pywps-4-demo.git
+	url = https://github.com/jachym/pywps-4-demo.git
+        branch = openshift
