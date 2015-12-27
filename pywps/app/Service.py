@@ -10,11 +10,12 @@ import pywps.configuration as config
 from pywps.exceptions import MissingParameterValue, NoApplicableCode, InvalidParameterValue, FileSizeExceeded, \
     StorageNotSupported
 from pywps.inout.inputs import ComplexInput, LiteralInput, BoundingBoxInput
+from pywps.dblog import log_request, update_response
 
 from collections import deque
 import shutil
 import os
-
+import uuid
 
 class Service(object):
     """ The top-level object that represents a WPS service. It's a WSGI
@@ -219,7 +220,7 @@ class Service(object):
     def describe(self, identifiers):
         if not identifiers:
             raise MissingParameterValue('', 'identifier')
-        
+
         identifier_elements = []
         # 'all' keyword means all processes
         if 'all' in (ident.lower() for ident in identifiers):
@@ -483,17 +484,26 @@ class Service(object):
 
     @Request.application
     def __call__(self, http_request):
+        request_uuid = uuid.uuid1()
         try:
             wps_request = WPSRequest(http_request)
-            if wps_request.operation == 'getcapabilities':
-                return self.get_capabilities()
+            if wps_request.operation in ['getcapabilities',
+                                         'describeprocess',
+                                         'execute']:
+                log_request(request_uuid, wps_request)
+                response = None
+                if wps_request.operation == 'getcapabilities':
+                    response = self.get_capabilities()
 
-            elif wps_request.operation == 'describeprocess':
-                return self.describe(wps_request.identifiers)
+                elif wps_request.operation == 'describeprocess':
+                    response = self.describe(wps_request.identifiers)
 
-            elif wps_request.operation == 'execute':
-                return self.execute(wps_request.identifier, wps_request)
+                elif wps_request.operation == 'execute':
+                    response = self.execute(wps_request.identifier, wps_request)
+                update_response(request_uuid, response)
+                return response
             else:
+                update_response(request_uuid, response)
                 raise RuntimeError("Unknown operation %r"
                                    % wps_request.operation)
 
@@ -501,6 +511,12 @@ class Service(object):
             # transform HTTPException to OWS NoApplicableCode exception
             if not isinstance(e, NoApplicableCode):
                 e = NoApplicableCode(e.description, code=e.code)
+
+            class FakeResponse:
+                message = e.locator
+                status = e.code
+                status_percentage = 100;
+            update_response(request_uuid, FakeResponse)
             return e
 
 
