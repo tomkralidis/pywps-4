@@ -1,0 +1,320 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Processes &mdash; PyWPS 4.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '4.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="PyWPS 4.0 documentation" href="index.html" />
+    <link rel="next" title="Exceptions" href="exceptions.html" />
+    <link rel="prev" title="Configuration" href="configuration.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="exceptions.html" title="Exceptions"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="configuration.html" title="Configuration"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">PyWPS 4.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="processes">
+<span id="process"></span><h1>Processes<a class="headerlink" href="#processes" title="Permalink to this headline">¶</a></h1>
+<p>PyWPS-4 works with processes and services. A process is a class containing an handler method
+and specifying inputs and outputs. A service is a collection of processes.</p>
+<div class="section" id="writing-a-process-class">
+<h2>Writing a process class<a class="headerlink" href="#writing-a-process-class" title="Permalink to this headline">¶</a></h2>
+<p>A processes is coded as a class inheriting from <a class="reference internal" href="api.html#pywps.Process" title="pywps.Process"><tt class="xref py py-class docutils literal"><span class="pre">Process</span></tt></a>.
+In the <em>demo</em> server they are kept inside the <em>processes</em> folder.
+Here is a very basic example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">pywps</span> <span class="kn">import</span> <span class="n">Process</span><span class="p">,</span> <span class="n">LiteralInput</span><span class="p">,</span> <span class="n">LiteralOutput</span>
+
+<span class="k">class</span> <span class="nc">HelloWorld</span><span class="p">(</span><span class="n">Process</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">inputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">LiteralInput</span><span class="p">(</span><span class="s">&#39;name&#39;</span><span class="p">,</span> <span class="s">&#39;Name of a person&#39;</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s">&#39;string&#39;</span><span class="p">)]</span>
+        <span class="n">outputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">LiteralOutput</span><span class="p">(</span><span class="s">&#39;output&#39;</span><span class="p">,</span> <span class="s">&#39;HelloWorld Output&#39;</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s">&#39;string&#39;</span><span class="p">)]</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">HelloWorld</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_handler</span><span class="p">,</span>
+            <span class="n">identifier</span><span class="o">=</span><span class="s">&#39;hello_world&#39;</span><span class="p">,</span>
+            <span class="n">version</span><span class="o">=</span><span class="s">&#39;0.1&#39;</span><span class="p">,</span>
+            <span class="n">title</span><span class="o">=</span><span class="s">&#39;My very first process!&#39;</span><span class="p">,</span>
+            <span class="n">abstract</span><span class="o">=</span><span class="s">&#39;This process takes the name of a person and displays Hello World with it.&#39;</span><span class="p">,</span>
+            <span class="n">inputs</span><span class="o">=</span><span class="n">inputs</span><span class="p">,</span>
+            <span class="n">outputs</span><span class="o">=</span><span class="n">outputs</span>
+        <span class="p">)</span>
+</pre></div>
+</div>
+<p>The first argument to the super class <em>__init__</em> method is the handler method.
+The second is the process identifier, that is used to distinguish this from
+other processes. Both these arguments are mandatory.</p>
+<p>The handler is a class method (or any callable object), that takes a request and a response
+object as arguments, and returns a response object. Like so:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="nd">@staticmethod</span>
+<span class="k">def</span> <span class="nf">_handler</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">response</span><span class="p">):</span>
+    <span class="n">response</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s">&#39;output&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="s">&#39;Hello world!&#39;</span>
+    <span class="k">return</span> <span class="n">response</span>
+</pre></div>
+</div>
+<p>request is an instance of <a class="reference internal" href="api.html#pywps.WPSRequest" title="pywps.WPSRequest"><tt class="xref py py-class docutils literal"><span class="pre">WPSRequest</span></tt></a>.
+response is an instance of <a class="reference internal" href="api.html#pywps.WPSResponse" title="pywps.WPSResponse"><tt class="xref py py-class docutils literal"><span class="pre">WPSResponse</span></tt></a>.</p>
+<p>These classes accept <a class="reference internal" href="api.html#pywps.LiteralInput" title="pywps.LiteralInput"><tt class="xref py py-class docutils literal"><span class="pre">LiteralInput</span></tt></a>
+values. The values can be strings (that become literal outputs) or
+<tt class="xref py py-class docutils literal"><span class="pre">FileReference</span></tt> objects (that become complex outputs).</p>
+</div>
+<div class="section" id="declaring-inputs-and-outputs">
+<h2>Declaring inputs and outputs<a class="headerlink" href="#declaring-inputs-and-outputs" title="Permalink to this headline">¶</a></h2>
+<p>Clients need to know which inputs the processes expects. They can be declared
+as <tt class="xref py py-class docutils literal"><span class="pre">Input</span></tt> objects in the <a class="reference internal" href="api.html#pywps.Process" title="pywps.Process"><tt class="xref py py-class docutils literal"><span class="pre">Process</span></tt></a> class declaration:</p>
+<div class="highlight-python"><div class="highlight"><pre>from pywps import Process, LiteralInput, LiteralOutput
+
+class FooProcess(Process):
+    def __init__(self):
+        inputs = [
+            LiteralInput(&#39;foo&#39;, data_type=&#39;string&#39;),
+            ComplexInput(&#39;bar&#39;, [Format(&#39;text/xml&#39;)])
+        ]
+        outputs = [
+            LiteralOutput(&#39;foo_output&#39;, data_type=&#39;string&#39;),
+            ComplexOutput(&#39;bar_output&#39;, [Format(&#39;JSON&#39;)])
+        ]
+
+        super(FooProcess, self).__init__(
+            ...
+            inputs=inputs,
+            outputs=outputs
+        )
+        ...
+</pre></div>
+</div>
+<dl class="docutils">
+<dt><a class="reference internal" href="api.html#pywps.LiteralInput" title="pywps.LiteralInput"><tt class="xref py py-class docutils literal"><span class="pre">LiteralInput</span></tt></a></dt>
+<dd>A simple value embedded in the request. The first argument is a
+name. The second argument is the type, one of <cite>string</cite>, <cite>float</cite>,
+<cite>integer</cite> or <cite>boolean</cite>.</dd>
+<dt><a class="reference internal" href="api.html#pywps.ComplexInput" title="pywps.ComplexInput"><tt class="xref py py-class docutils literal"><span class="pre">ComplexInput</span></tt></a></dt>
+<dd>A large data object, for example a layer. The first argument is a
+name. The second argument is a list of one or more formats, e.g.
+<tt class="docutils literal"><span class="pre">text/xml</span></tt> for GML files or <tt class="docutils literal"><span class="pre">application/json</span></tt> for GeoJSON
+files.</dd>
+<dt><a class="reference internal" href="api.html#pywps.LiteralOutput" title="pywps.LiteralOutput"><tt class="xref py py-class docutils literal"><span class="pre">LiteralOutput</span></tt></a></dt>
+<dd>A simple value embedded in the response. The first argument is a
+name. The second argument is the type, one of <cite>string</cite>, <cite>float</cite>,
+<cite>integer</cite> or <cite>boolean</cite>.</dd>
+<dt><a class="reference internal" href="api.html#pywps.ComplexOutput" title="pywps.ComplexOutput"><tt class="xref py py-class docutils literal"><span class="pre">ComplexOutput</span></tt></a></dt>
+<dd>Same as <a class="reference internal" href="api.html#pywps.ComplexInput" title="pywps.ComplexInput"><tt class="xref py py-class docutils literal"><span class="pre">ComplexInput</span></tt></a>. The first argument is a
+name. The second argument is a list of one or more formats, e.g.
+<tt class="docutils literal"><span class="pre">text/xml</span></tt> for GML files or <tt class="docutils literal"><span class="pre">application/json</span></tt> for GeoJSON
+files.</dd>
+</dl>
+</div>
+<div class="section" id="reading-input">
+<h2>Reading input<a class="headerlink" href="#reading-input" title="Permalink to this headline">¶</a></h2>
+<p>Handlers receive an input argument, a <a class="reference internal" href="api.html#pywps.WPSRequest" title="pywps.WPSRequest"><tt class="xref py py-class docutils literal"><span class="pre">WPSRequest</span></tt></a> object. Input
+values are found in the <cite>inputs</cite> dictionary:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="nd">@staticmethod</span>
+<span class="k">def</span> <span class="nf">_handler</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">response</span><span class="p">):</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">inputs</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span>
+    <span class="n">response</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s">&#39;output&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="s">&#39;Hello world </span><span class="si">%s</span><span class="s">!&#39;</span> <span class="o">%</span> <span class="n">name</span>
+    <span class="k">return</span> <span class="n">response</span>
+</pre></div>
+</div>
+<p><cite>inputs</cite> is a plain Python dictionary.
+Input can be set and read in different ways including as a file, as data
+- like string or numbers - or as a stream:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">request</span><span class="o">.</span><span class="n">inputs</span><span class="p">[</span><span class="s">&#39;file_input&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">file</span>
+<span class="n">request</span><span class="o">.</span><span class="n">inputs</span><span class="p">[</span><span class="s">&#39;data_input&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span>
+<span class="n">request</span><span class="o">.</span><span class="n">inputs</span><span class="p">[</span><span class="s">&#39;stream_input&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">stream</span>
+</pre></div>
+</div>
+<p>For <cite>LiteralInput</cite>, the value is a string. For <cite>ComplexInput</cite>, the value
+is an open file object, with a <cite>mime_type</cite> attribute:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="nd">@staticmethod</span>
+<span class="k">def</span> <span class="nf">handler</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">response</span><span class="p">):</span>
+    <span class="n">layer_file</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">inputs</span><span class="p">[</span><span class="s">&#39;layer&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">file</span>
+    <span class="n">mime_type</span> <span class="o">=</span> <span class="n">layer_file</span><span class="o">.</span><span class="n">mime_type</span>
+    <span class="nb">bytes</span> <span class="o">=</span> <span class="n">layer_file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&quot;You gave me a file of type </span><span class="si">%s</span><span class="s"> and size </span><span class="si">%d</span><span class="s">&quot;</span>
+           <span class="o">%</span> <span class="p">(</span><span class="n">mime_type</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="nb">bytes</span><span class="p">)))</span>
+    <span class="n">response</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s">&#39;output&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">msg</span>
+    <span class="k">return</span> <span class="n">response</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="returning-large-data">
+<h2>Returning large data<a class="headerlink" href="#returning-large-data" title="Permalink to this headline">¶</a></h2>
+<p>WPS allows for a clever method of returning a large data file: instead
+of embedding the data in the response, it can be saved separately, and
+a URL returned from where the data can be downloaded. In the current
+implementation, the PyWPS-4 core will save the file in a folder specified
+in the configuration passed by the service (or in a default location).
+The URL returned is embedded in the XML response.</p>
+<p>This behaviour can be requested either by using a GET:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="o">...</span><span class="n">ResponseDocument</span><span class="o">=</span><span class="n">output</span><span class="o">=</span><span class="nd">@asReference</span><span class="o">=</span><span class="n">true</span><span class="o">...</span>
+</pre></div>
+</div>
+<p>Or a POST request:</p>
+<div class="highlight-python"><div class="highlight"><pre>...
+&lt;wps:ResponseForm&gt;
+    &lt;wps:ResponseDocument&gt;
+        &lt;wps:Output asReference=&quot;true&quot;&gt;
+            &lt;ows:Identifier&gt;output&lt;/ows:Identifier&gt;
+            &lt;ows:Title&gt;Some Output&lt;/ows:Title&gt;
+        &lt;/wps:Output&gt;
+    &lt;/wps:ResponseDocument&gt;
+&lt;/wps:ResponseForm&gt;
+...
+</pre></div>
+</div>
+<p><strong>output</strong> is the identifier of the output the user wishes to have be stored
+and accessible from a URL. The user may request as many outputs by reference
+as need, but only <em>one</em> may be requested in RAW format.</p>
+</div>
+<div class="section" id="publishing-a-process">
+<h2>Publishing a process<a class="headerlink" href="#publishing-a-process" title="Permalink to this headline">¶</a></h2>
+<p>In order for clients to invoke processes, a PyWPS
+<a class="reference internal" href="api.html#pywps.Service" title="pywps.Service"><tt class="xref py py-class docutils literal"><span class="pre">Service</span></tt></a> class must be present with the ability to listen for requests.
+An instance of this class must created, receiving instances of
+all the desired processes classes.</p>
+<p>In the <em>demo</em> application the <a class="reference internal" href="api.html#pywps.Service" title="pywps.Service"><tt class="xref py py-class docutils literal"><span class="pre">Service</span></tt></a> class instance is created in
+<tt class="xref py py-class docutils literal"><span class="pre">Server</span></tt> class. <tt class="xref py py-class docutils literal"><span class="pre">Server</span></tt> is a development server that relies
+on <a class="reference external" href="http://flask.pocoo.org">Flask</a>. The publication
+of processes is encapsulated in <em>demo.py</em>, where a main method
+passes a list of processes instances to the <tt class="xref py py-class docutils literal"><span class="pre">Server</span></tt> class:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">pywps</span> <span class="kn">import</span> <span class="n">Service</span>
+<span class="kn">from</span> <span class="nn">processes.helloworld</span> <span class="kn">import</span> <span class="n">HelloWorld</span>
+
+<span class="o">...</span>
+<span class="n">processes</span> <span class="o">=</span> <span class="p">[</span> <span class="n">HelloWorld</span><span class="p">()</span> <span class="p">]</span>
+
+<span class="n">server</span> <span class="o">=</span> <span class="n">Server</span><span class="p">(</span><span class="n">processes</span><span class="o">=</span><span class="n">processes</span><span class="p">)</span>
+<span class="o">...</span>
+</pre></div>
+</div>
+<p>The <em>demo</em> application is a <a class="reference external" href="http://werkzeug.pocoo.org/docs/terms/#wsgi">WSGI application</a> that accepts incoming <cite>Execute</cite>
+requests and calls the appropriate process to handle them. It also
+answers <cite>GetCapabilities</cite> and <cite>DescribeProcess</cite> requests based on the
+process identifier and their inputs and outputs.</p>
+<p>A host, a port, a config file and the processes can be passed as arguments to the
+<tt class="xref py py-class docutils literal"><span class="pre">Server</span></tt> constructor.
+<strong>host</strong> and <strong>port</strong> will be <strong>prioritized</strong> if passed to the constructor,
+otherwise the contents of the config file (<em>pywps.cfg</em>) are used.</p>
+<p>Use <cite>run</cite> method start the server:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="o">...</span>
+<span class="n">s</span> <span class="o">=</span> <span class="n">Server</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="s">&#39;0.0.0.0&#39;</span><span class="p">,</span> <span class="n">processes</span><span class="o">=</span><span class="n">processes</span><span class="p">,</span> <span class="n">config_file</span><span class="o">=</span><span class="n">config_file</span><span class="p">)</span>
+
+<span class="n">s</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<span class="o">...</span>
+</pre></div>
+</div>
+<p>To make the server visible from another computer, replace <tt class="docutils literal"><span class="pre">localhost</span></tt> with <tt class="docutils literal"><span class="pre">0.0.0.0</span></tt>.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/pywps.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Processes</a><ul>
+<li><a class="reference internal" href="#writing-a-process-class">Writing a process class</a></li>
+<li><a class="reference internal" href="#declaring-inputs-and-outputs">Declaring inputs and outputs</a></li>
+<li><a class="reference internal" href="#reading-input">Reading input</a></li>
+<li><a class="reference internal" href="#returning-large-data">Returning large data</a></li>
+<li><a class="reference internal" href="#publishing-a-process">Publishing a process</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="configuration.html"
+                        title="previous chapter">Configuration</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="exceptions.html"
+                        title="next chapter">Exceptions</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/process.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="exceptions.html" title="Exceptions"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="configuration.html" title="Configuration"
+             >previous</a> |</li>
+        <li><a href="index.html">PyWPS 4.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Jachym Cepicky.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>

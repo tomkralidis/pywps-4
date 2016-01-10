@@ -2,9 +2,8 @@
 *.pyo
 *.egg-info
 dist
-build
+./build
 .tox
-/docs/_build
 
 # vim, mac os
 *.sw*

@@ -1,0 +1,299 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>API &mdash; PyWPS 4.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '4.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="PyWPS 4.0 documentation" href="index.html" />
+    <link rel="prev" title="Exceptions" href="exceptions.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="exceptions.html" title="Exceptions"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">PyWPS 4.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-pywps">
+<span id="api"></span><h1>API<a class="headerlink" href="#module-pywps" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="defining-processes">
+<h2>Defining processes<a class="headerlink" href="#defining-processes" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="pywps.Process">
+<em class="property">class </em><tt class="descclassname">pywps.</tt><tt class="descname">Process</tt><big>(</big><em>handler</em>, <em>identifier</em>, <em>title</em>, <em>abstract=''</em>, <em>profile=[]</em>, <em>wsdl=''</em>, <em>metadata=[]</em>, <em>inputs=[]</em>, <em>outputs=[]</em>, <em>version='None'</em>, <em>store_supported=False</em>, <em>status_supported=False</em><big>)</big><a class="headerlink" href="#pywps.Process" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>handler</strong> &#8211; A callable that gets invoked for each incoming
+request. It should accept a single
+<a class="reference internal" href="#pywps.WPSRequest" title="pywps.WPSRequest"><tt class="xref py py-class docutils literal"><span class="pre">WPSRequest</span></tt></a> argument and return a
+<a class="reference internal" href="#pywps.WPSResponse" title="pywps.WPSResponse"><tt class="xref py py-class docutils literal"><span class="pre">WPSResponse</span></tt></a> object.</li>
+<li><strong>identifier</strong> &#8211; Name of this process.</li>
+<li><strong>inputs</strong> &#8211; List of inputs accepted by this process. They
+should be <a class="reference internal" href="#pywps.LiteralInput" title="pywps.LiteralInput"><tt class="xref py py-class docutils literal"><span class="pre">LiteralInput</span></tt></a> and <a class="reference internal" href="#pywps.ComplexInput" title="pywps.ComplexInput"><tt class="xref py py-class docutils literal"><span class="pre">ComplexInput</span></tt></a>
+and <tt class="xref py py-class docutils literal"><span class="pre">BoundingBoxInput</span></tt>
+objects.</li>
+<li><strong>outputs</strong> &#8211; List of outputs returned by this process. They
+should be <a class="reference internal" href="#pywps.LiteralOutput" title="pywps.LiteralOutput"><tt class="xref py py-class docutils literal"><span class="pre">LiteralOutput</span></tt></a> and <a class="reference internal" href="#pywps.ComplexOutput" title="pywps.ComplexOutput"><tt class="xref py py-class docutils literal"><span class="pre">ComplexOutput</span></tt></a>
+and <tt class="xref py py-class docutils literal"><span class="pre">BoundingBoxOutput</span></tt>
+objects.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="pywps.Service">
+<em class="property">class </em><tt class="descclassname">pywps.</tt><tt class="descname">Service</tt><big>(</big><em>processes=[]</em><big>)</big><a class="headerlink" href="#pywps.Service" title="Permalink to this definition">¶</a></dt>
+<dd><p>The top-level object that represents a WPS service. It&#8217;s a WSGI
+application.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>processes</strong> &#8211; A list of <a class="reference internal" href="#pywps.Process" title="pywps.Process"><tt class="xref py py-class docutils literal"><span class="pre">Process</span></tt></a> objects that are
+provided by this service.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="pywps.LiteralInput">
+<em class="property">class </em><tt class="descclassname">pywps.</tt><tt class="descname">LiteralInput</tt><big>(</big><em>identifier</em>, <em>title</em>, <em>data_type='string'</em>, <em>abstract=''</em>, <em>metadata=[]</em>, <em>uoms=[]</em>, <em>default=''</em>, <em>min_occurs='1'</em>, <em>max_occurs='1'</em>, <em>as_reference=False</em><big>)</big><a class="headerlink" href="#pywps.LiteralInput" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>identifier</strong> &#8211; The name of this input.</li>
+<li><strong>data_type</strong> &#8211; Type of literal input (e.g. <cite>string</cite>, <cite>float</cite>...).</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="pywps.ComplexInput">
+<em class="property">class </em><tt class="descclassname">pywps.</tt><tt class="descname">ComplexInput</tt><big>(</big><em>identifier</em>, <em>title</em>, <em>allowed_formats=None</em>, <em>data_format=None</em>, <em>abstract=''</em>, <em>metadata=[]</em>, <em>min_occurs='1'</em>, <em>max_occurs='1'</em>, <em>as_reference=False</em><big>)</big><a class="headerlink" href="#pywps.ComplexInput" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>identifier</strong> &#8211; The name of this input.</li>
+<li><strong>allowed_formats</strong> &#8211; Allowed formats for this input. Should be a list of
+one or more <a class="reference internal" href="#pywps.Format" title="pywps.Format"><tt class="xref py py-class docutils literal"><span class="pre">Format</span></tt></a> objects.</li>
+<li><strong>data_format</strong> &#8211; Format of the passed input. Should be <a class="reference internal" href="#pywps.Format" title="pywps.Format"><tt class="xref py py-class docutils literal"><span class="pre">Format</span></tt></a> object</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="pywps.LiteralOutput">
+<em class="property">class </em><tt class="descclassname">pywps.</tt><tt class="descname">LiteralOutput</tt><big>(</big><em>identifier</em>, <em>title</em>, <em>data_type='string'</em>, <em>abstract=''</em>, <em>metadata=[]</em>, <em>uoms=[]</em><big>)</big><a class="headerlink" href="#pywps.LiteralOutput" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>identifier</strong> &#8211; The name of this output.</li>
+<li><strong>data_type</strong> &#8211; Type of literal input (e.g. <cite>string</cite>, <cite>float</cite>...).</li>
+<li><strong>value</strong> &#8211; Resulting value
+Should be <tt class="xref py py-class docutils literal"><span class="pre">String</span></tt> object.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="pywps.ComplexOutput">
+<em class="property">class </em><tt class="descclassname">pywps.</tt><tt class="descname">ComplexOutput</tt><big>(</big><em>identifier</em>, <em>title</em>, <em>output_format</em>, <em>abstract=''</em>, <em>supported_formats=None</em>, <em>metadata=[]</em><big>)</big><a class="headerlink" href="#pywps.ComplexOutput" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>identifier</strong> &#8211; The name of this output.</li>
+<li><strong>formats</strong> &#8211; Possible output formats for this output.
+Should be list of <a class="reference internal" href="#pywps.Format" title="pywps.Format"><tt class="xref py py-class docutils literal"><span class="pre">Format</span></tt></a> object.</li>
+<li><strong>output_format</strong> &#8211; Required format for this output.
+Should be <a class="reference internal" href="#pywps.Format" title="pywps.Format"><tt class="xref py py-class docutils literal"><span class="pre">Format</span></tt></a> object.</li>
+<li><strong>encoding</strong> &#8211; The encoding of this input or requested for this output
+(e.g., UTF-8).</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="pywps.Format">
+<em class="property">class </em><tt class="descclassname">pywps.</tt><tt class="descname">Format</tt><big>(</big><em>mime_type</em>, <em>schema=None</em>, <em>encoding=None</em>, <em>validator=None</em><big>)</big><a class="headerlink" href="#pywps.Format" title="Permalink to this definition">¶</a></dt>
+<dd><p>Input/output format specification</p>
+</dd></dl>
+
+</div>
+<div class="section" id="request-and-response-objects">
+<h2>Request and response objects<a class="headerlink" href="#request-and-response-objects" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="pywps.WPSRequest">
+<em class="property">class </em><tt class="descclassname">pywps.</tt><tt class="descname">WPSRequest</tt><big>(</big><em>http_request</em><big>)</big><a class="headerlink" href="#pywps.WPSRequest" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt id="pywps.WPSRequest.operation">
+<tt class="descname">operation</tt><a class="headerlink" href="#pywps.WPSRequest.operation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type of operation requested by the client. Can be
+<cite>getcapabilities</cite>, <cite>describeprocess</cite> or <cite>execute</cite>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pywps.WPSRequest.http_request">
+<tt class="descname">http_request</tt><a class="headerlink" href="#pywps.WPSRequest.http_request" title="Permalink to this definition">¶</a></dt>
+<dd><p>Original Werkzeug HTTPRequest object.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pywps.WPSRequest.inputs">
+<tt class="descname">inputs</tt><a class="headerlink" href="#pywps.WPSRequest.inputs" title="Permalink to this definition">¶</a></dt>
+<dd><p>A MultiDict object containing input values sent by the client.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pywps.WPSRequest.check_accepted_versions">
+<tt class="descname">check_accepted_versions</tt><big>(</big><em>acceptedversions</em><big>)</big><a class="headerlink" href="#pywps.WPSRequest.check_accepted_versions" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>acceptedversions</strong> &#8211; string</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pywps.WPSRequest.check_and_set_version">
+<tt class="descname">check_and_set_version</tt><big>(</big><em>version</em><big>)</big><a class="headerlink" href="#pywps.WPSRequest.check_and_set_version" title="Permalink to this definition">¶</a></dt>
+<dd><p>set this.version</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="pywps.WPSResponse">
+<em class="property">class </em><tt class="descclassname">pywps.</tt><tt class="descname">WPSResponse</tt><big>(</big><em>process</em>, <em>wps_request</em><big>)</big><a class="headerlink" href="#pywps.WPSResponse" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/pywps.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">API</a><ul>
+<li><a class="reference internal" href="#defining-processes">Defining processes</a></li>
+<li><a class="reference internal" href="#request-and-response-objects">Request and response objects</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="exceptions.html"
+                        title="previous chapter">Exceptions</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/api.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="exceptions.html" title="Exceptions"
+             >previous</a> |</li>
+        <li><a href="index.html">PyWPS 4.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Jachym Cepicky.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>

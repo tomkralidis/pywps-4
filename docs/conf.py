@@ -9,7 +9,7 @@ release = '4.0'
 latex_logo = 'pywps.png'
 
 extensions = ['sphinx.ext.autodoc']
-exclude_patterns = ['_build']
+exclude_patterns = ['build']
 source_suffix = '.rst'
 master_doc = 'index'
 
